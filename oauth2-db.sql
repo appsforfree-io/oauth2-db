@@ -4,72 +4,85 @@ USE oauth2db;
 
 CREATE TABLE GrantType
 (
-    grantType VARCHAR(255),
-    PRIMARY KEY (grantType)
+    grant_type VARCHAR(255) NOT NULL,
+    PRIMARY KEY (grant_type)
 );
 
 CREATE TABLE Scope
 (
-    scope VARCHAR(255),
+    scope VARCHAR(255) NOT NULL,
     PRIMARY KEY (scope)
 );
 
 CREATE TABLE ClientType
 (
-    clientType VARCHAR(255),
-    PRIMARY KEY (clientType)
+    client_type VARCHAR(255) NOT NULL,
+    PRIMARY KEY (client_type)
 );
 
 CREATE TABLE User
 (
-    username VARCHAR(255), 
-    password VARCHAR(255),
+    username VARCHAR(255) NOT NULL, 
+    password VARCHAR(255) NOT NULL,
     PRIMARY KEY (username)
 );
 
 CREATE TABLE Client
 (
-    clientId VARCHAR(255),
-    clientSecret VARCHAR(255),
-    PRIMARY KEY (clientId)
+    client_id VARCHAR(255) NOT NULL,
+    client_secret VARCHAR(255) NOT NULL,
+    client_type VARCHAR(255) NOT NULL,
+    PRIMARY KEY (client_id),
+    FOREIGN KEY (client_type) REFERENCES ClientType(client_type)
 );
 
 CREATE TABLE RefreshToken
 (
-    refreshToken VARCHAR(255), 
-    clientId VARCHAR(255), 
-    username VARCHAR(255),
-    PRIMARY KEY (refreshToken)
+    refresh_token VARCHAR(255) NOT NULL, 
+    client_id VARCHAR(255) NOT NULL, 
+    username VARCHAR(255) NOT NULL,
+    PRIMARY KEY (refresh_token),
+    FOREIGN KEY (client_id) REFERENCES Client(client_id),
+    FOREIGN KEY (username) REFERENCES User(username)
 );
 
 CREATE TABLE AccessToken
 (
-    accessToken VARCHAR(255), 
-    refreshToken VARCHAR(255), 
-    clientId VARCHAR(255), 
-    username VARCHAR(255),
-    PRIMARY KEY (accessToken)
+    access_token VARCHAR(255) NOT NULL, 
+    client_id VARCHAR(255) NOT NULL, 
+    username VARCHAR(255) NOT NULL,
+    refresh_token VARCHAR(255), 
+    PRIMARY KEY (access_token),
+    FOREIGN KEY (client_id) REFERENCES Client(client_id),
+    FOREIGN KEY (username) REFERENCES User(username),
+    FOREIGN KEY (refresh_token) REFERENCES RefreshToken(refresh_token)
 );
 
 CREATE TABLE AvailableGrantType
 (
-    clientId VARCHAR(255), 
-    grantType VARCHAR(255),
-    PRIMARY KEY (clientId, grantType)
+    client_id VARCHAR(255) NOT NULL, 
+    grant_type VARCHAR(255) NOT NULL,
+    PRIMARY KEY (client_id, grant_type),
+    FOREIGN KEY (client_id) REFERENCES Client(client_id),
+    FOREIGN KEY (grant_type) REFERENCES GrantType(grant_type)
 );
 
 CREATE TABLE AvailableScope
 (
-    clientId VARCHAR(255), 
-    scope VARCHAR(255),
-    PRIMARY KEY (clientId, scope)
+    client_id VARCHAR(255) NOT NULL, 
+    scope VARCHAR(255) NOT NULL,
+    PRIMARY KEY (client_id, scope),
+    FOREIGN KEY (client_id) REFERENCES Client(client_id),
+    FOREIGN KEY (scope) REFERENCES Scope(scope)
 );
 
 CREATE TABLE AuthorizedScope
 (
-    accessToken VARCHAR(255), 
-    scope VARCHAR(255),
-    PRIMARY KEY (accessToken, scope)
+    access_token VARCHAR(255) NOT NULL, 
+    scope VARCHAR(255) NOT NULL,
+    PRIMARY KEY (access_token, scope),
+    FOREIGN KEY (access_token) REFERENCES AccessToken(access_token),
+    FOREIGN KEY (scope) REFERENCES Scope(scope)
 );
 
 INSERT INTO ClientType VALUES ("confidential"), ("public");
