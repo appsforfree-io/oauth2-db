@@ -87,3 +87,31 @@ CREATE TABLE AuthorizedScope
 
 INSERT INTO ClientType VALUES ("confidential"), ("public");
 INSERT INTO GrantType VALUES ("password");
+
+DELIMITER //
+CREATE PROCEDURE SaveClient(
+    IN v_client_id VARCHAR(255),
+    IN v_client_secret VARCHAR(255),
+    IN v_client_type VARCHAR(255))
+BEGIN
+    INSERT INTO Client (client_id, client_secret, client_type) 
+    VALUE (v_client_id, v_client_secret, v_client_type);
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE GetClient(IN v_client_id VARCHAR(255))
+BEGIN
+    SELECT client_id, client_secret, client_type
+    FROM Client
+    WHERE client_id = v_client_id;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE RemoveClient(IN v_client_id VARCHAR(255))
+BEGIN
+    DELETE FROM Client
+    WHERE client_id = v_client_id;
+END //
+DELIMITER ;
