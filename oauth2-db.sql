@@ -115,3 +115,29 @@ BEGIN
     WHERE client_id = v_client_id;
 END //
 DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE GetUser(IN v_username VARCHAR(255))
+BEGIN
+    SELECT username, password
+    FROM User
+    WHERE username = v_username;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE SaveUser(
+    IN v_username VARCHAR(255), 
+    IN v_password VARCHAR(255))
+BEGIN
+    INSERT INTO User (username, password) 
+    VALUE (v_username, v_password);
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE DeleteUser(IN v_username VARCHAR(255))
+BEGIN
+    DELETE FROM User WHERE username = v_username;
+END //
+DELIMITER ;
