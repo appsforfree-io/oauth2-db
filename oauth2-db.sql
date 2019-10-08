@@ -141,3 +141,30 @@ BEGIN
     DELETE FROM User WHERE username = v_username;
 END //
 DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE GetRefreshToken(IN v_refresh_token VARCHAR(255))
+BEGIN
+    SELECT refresh_token, client_id, username
+    FROM RefreshToken
+    WHERE refresh_token = v_refresh_token;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE SaveRefreshToken(
+    IN v_refresh_token VARCHAR(255), 
+    IN v_client_id VARCHAR(255),
+    IN v_username VARCHAR(255))
+BEGIN
+    INSERT INTO RefreshToken (refresh_token, client_id, username) 
+    VALUE (v_refresh_token, v_client_id, v_username);
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE DeleteRefreshToken(IN v_refresh_token VARCHAR(255))
+BEGIN
+    DELETE FROM RefreshToken WHERE refresh_token = v_refresh_token;
+END //
+DELIMITER ;
