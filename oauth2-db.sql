@@ -168,3 +168,31 @@ BEGIN
     DELETE FROM RefreshToken WHERE refresh_token = v_refresh_token;
 END //
 DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE GetAccessToken(IN v_access_token VARCHAR(255))
+BEGIN
+    SELECT access_token, client_id, username, refresh_token
+    FROM AccessToken
+    WHERE access_token = v_access_token;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE SaveAccessToken(
+    IN v_access_token VARCHAR(255), 
+    IN v_client_id VARCHAR(255), 
+    IN v_username VARCHAR(255), 
+    IN v_refresh_token VARCHAR(255))
+BEGIN
+    INSERT INTO AccessToken (access_token, client_id, username, refresh_token)
+    VALUE (v_access_token, v_client_id, v_username, v_refresh_token);
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE DeleteAccessToken(IN v_access_token VARCHAR(255))
+BEGIN
+    DELETE FROM AccessToken WHERE access_token = v_access_token;
+END //
+DELIMITER ;
