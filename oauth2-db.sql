@@ -58,7 +58,7 @@ CREATE TABLE AccessToken
     FOREIGN KEY (refresh_token) REFERENCES RefreshToken(refresh_token)
 );
 
-CREATE TABLE AvailableGrantType
+CREATE TABLE SupportedGrantType
 (
     client_id VARCHAR(255) NOT NULL, 
     grant_type VARCHAR(255) NOT NULL,
@@ -67,7 +67,7 @@ CREATE TABLE AvailableGrantType
     FOREIGN KEY (grant_type) REFERENCES GrantType(grant_type)
 );
 
-CREATE TABLE AvailableScope
+CREATE TABLE ValidScope
 (
     client_id VARCHAR(255) NOT NULL, 
     scope VARCHAR(255) NOT NULL,
@@ -78,10 +78,12 @@ CREATE TABLE AvailableScope
 
 CREATE TABLE AuthorizedScope
 (
-    access_token VARCHAR(255) NOT NULL, 
+    username VARCHAR(255) NOT NULL, 
+    client_id VARCHAR(255) NOT NULL,
     scope VARCHAR(255) NOT NULL,
-    PRIMARY KEY (access_token, scope),
-    FOREIGN KEY (access_token) REFERENCES AccessToken(access_token),
+    PRIMARY KEY (username, client_id, scope),
+    FOREIGN KEY (username) REFERENCES User(username),
+    FOREIGN KEY (client_id) REFERENCES Client(client_id),
     FOREIGN KEY (scope) REFERENCES Scope(scope)
 );
 
