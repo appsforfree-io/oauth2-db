@@ -40,7 +40,9 @@ CREATE TABLE RefreshToken
 (
     refresh_token VARCHAR(255) NOT NULL, 
     client_id VARCHAR(255) NOT NULL, 
-    username VARCHAR(255) NOT NULL,
+    issued_at TIMESTAMP,
+    expires_on TIMESTAMP,
+    username VARCHAR(255),
     PRIMARY KEY (refresh_token),
     FOREIGN KEY (client_id) REFERENCES Client(client_id),
     FOREIGN KEY (username) REFERENCES User(username)
@@ -50,7 +52,7 @@ CREATE TABLE AccessToken
 (
     access_token VARCHAR(255) NOT NULL, 
     client_id VARCHAR(255) NOT NULL, 
-    username VARCHAR(255) NOT NULL,
+    username VARCHAR(255),
     refresh_token VARCHAR(255), 
     PRIMARY KEY (access_token),
     FOREIGN KEY (client_id) REFERENCES Client(client_id),
@@ -147,7 +149,7 @@ DELIMITER ;
 DELIMITER //
 CREATE PROCEDURE GetRefreshToken(IN v_refresh_token VARCHAR(255))
 BEGIN
-    SELECT refresh_token, client_id, username
+    SELECT refresh_token, client_id, issued_at, expires_on, username
     FROM RefreshToken
     WHERE refresh_token = v_refresh_token;
 END //
@@ -157,10 +159,12 @@ DELIMITER //
 CREATE PROCEDURE SaveRefreshToken(
     IN v_refresh_token VARCHAR(255), 
     IN v_client_id VARCHAR(255),
+    IN v_issued_at TIMESTAMP,
+    IN v_expires_on TIMESTAMP,
     IN v_username VARCHAR(255))
 BEGIN
-    INSERT INTO RefreshToken (refresh_token, client_id, username) 
-    VALUE (v_refresh_token, v_client_id, v_username);
+    INSERT INTO RefreshToken (refresh_token, client_id, issued_at, expires_on, username) 
+    VALUE (v_refresh_token, v_client_id, v_issued_at, v_expires_on, v_username);
 END //
 DELIMITER ;
 
