@@ -88,7 +88,7 @@ CREATE TABLE AuthorizedScope
 );
 
 INSERT INTO ClientType VALUES ("confidential"), ("public");
-INSERT INTO GrantType VALUES ("password");
+INSERT INTO GrantType VALUES ("password"), ("client_credentials"), ("authorization_code");
 
 DELIMITER //
 CREATE PROCEDURE SaveClient(
@@ -196,5 +196,19 @@ DELIMITER //
 CREATE PROCEDURE DeleteAccessToken(IN v_access_token VARCHAR(255))
 BEGIN
     DELETE FROM AccessToken WHERE access_token = v_access_token;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE GetSupportedGrantTypes(IN v_client_id VARCHAR(255))
+BEGIN
+    SELECT grant_type FROM SupportedGrantType WHERE client_id = v_client_id;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE GetValidScopes(IN v_client_id VARCHAR(255))
+BEGIN
+    SELECT scope FROM ValidScope WHERE client_id = v_client_id;
 END //
 DELIMITER ;
