@@ -52,6 +52,8 @@ CREATE TABLE AccessToken
 (
     access_token VARCHAR(255) NOT NULL, 
     client_id VARCHAR(255) NOT NULL, 
+    issued_at TIMESTAMP,
+    expires_on TIMESTAMP,
     username VARCHAR(255),
     refresh_token VARCHAR(255), 
     PRIMARY KEY (access_token),
@@ -178,7 +180,7 @@ DELIMITER ;
 DELIMITER //
 CREATE PROCEDURE GetAccessToken(IN v_access_token VARCHAR(255))
 BEGIN
-    SELECT access_token, client_id, username, refresh_token
+    SELECT access_token, client_id, issued_at, expires_on, username, refresh_token
     FROM AccessToken
     WHERE access_token = v_access_token;
 END //
@@ -188,11 +190,13 @@ DELIMITER //
 CREATE PROCEDURE SaveAccessToken(
     IN v_access_token VARCHAR(255), 
     IN v_client_id VARCHAR(255), 
+    IN v_issued_at TIMESTAMP, 
+    IN v_expires_on TIMESTAMP, 
     IN v_username VARCHAR(255), 
     IN v_refresh_token VARCHAR(255))
 BEGIN
-    INSERT INTO AccessToken (access_token, client_id, username, refresh_token)
-    VALUE (v_access_token, v_client_id, v_username, v_refresh_token);
+    INSERT INTO AccessToken (access_token, client_id, issued_at, expires_on, username, refresh_token)
+    VALUE (v_access_token, v_client_id, v_issued_at, v_expires_on, v_username, v_refresh_token);
 END //
 DELIMITER ;
 
