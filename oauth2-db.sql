@@ -44,8 +44,8 @@ CREATE TABLE RefreshToken
     expires_on TIMESTAMP,
     username VARCHAR(255),
     PRIMARY KEY (refresh_token),
-    FOREIGN KEY (client_id) REFERENCES Client(client_id),
-    FOREIGN KEY (username) REFERENCES User(username)
+    FOREIGN KEY (client_id) REFERENCES Client(client_id) ON DELETE CASCADE,
+    FOREIGN KEY (username) REFERENCES User(username) ON DELETE CASCADE
 );
 
 CREATE TABLE AccessToken
@@ -57,9 +57,9 @@ CREATE TABLE AccessToken
     username VARCHAR(255),
     refresh_token VARCHAR(255), 
     PRIMARY KEY (access_token),
-    FOREIGN KEY (client_id) REFERENCES Client(client_id),
-    FOREIGN KEY (username) REFERENCES User(username),
-    FOREIGN KEY (refresh_token) REFERENCES RefreshToken(refresh_token)
+    FOREIGN KEY (client_id) REFERENCES Client(client_id) ON DELETE CASCADE,
+    FOREIGN KEY (username) REFERENCES User(username) ON DELETE CASCADE,
+    FOREIGN KEY (refresh_token) REFERENCES RefreshToken(refresh_token) ON DELETE CASCADE
 );
 
 CREATE TABLE SupportedGrantType
@@ -67,7 +67,7 @@ CREATE TABLE SupportedGrantType
     client_id VARCHAR(255) NOT NULL, 
     grant_type VARCHAR(255) NOT NULL,
     PRIMARY KEY (client_id, grant_type),
-    FOREIGN KEY (client_id) REFERENCES Client(client_id),
+    FOREIGN KEY (client_id) REFERENCES Client(client_id) ON DELETE CASCADE,
     FOREIGN KEY (grant_type) REFERENCES GrantType(grant_type)
 );
 
@@ -76,8 +76,8 @@ CREATE TABLE ValidScope
     client_id VARCHAR(255) NOT NULL, 
     scope VARCHAR(255) NOT NULL,
     PRIMARY KEY (client_id, scope),
-    FOREIGN KEY (client_id) REFERENCES Client(client_id),
-    FOREIGN KEY (scope) REFERENCES Scope(scope)
+    FOREIGN KEY (client_id) REFERENCES Client(client_id) ON DELETE CASCADE,
+    FOREIGN KEY (scope) REFERENCES Scope(scope) ON DELETE CASCADE
 );
 
 CREATE TABLE AuthorizedScope
@@ -86,13 +86,13 @@ CREATE TABLE AuthorizedScope
     client_id VARCHAR(255) NOT NULL,
     scope VARCHAR(255) NOT NULL,
     PRIMARY KEY (username, client_id, scope),
-    FOREIGN KEY (username) REFERENCES User(username),
-    FOREIGN KEY (client_id) REFERENCES Client(client_id),
-    FOREIGN KEY (scope) REFERENCES Scope(scope)
+    FOREIGN KEY (username) REFERENCES User(username) ON DELETE CASCADE,
+    FOREIGN KEY (client_id) REFERENCES Client(client_id) ON DELETE CASCADE,
+    FOREIGN KEY (scope) REFERENCES Scope(scope) ON DELETE CASCADE
 );
 
 INSERT INTO ClientType VALUES ("confidential"), ("public");
-INSERT INTO GrantType VALUES ("password"), ("client_credentials"), ("authorization_code");
+INSERT INTO GrantType VALUES ("password"), ("client_credentials"), ("authorization_code"), ("refresh_token");
 
 DELIMITER //
 CREATE PROCEDURE SaveClient(
