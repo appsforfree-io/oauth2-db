@@ -32,6 +32,7 @@ CREATE TABLE Client
     client_id VARCHAR(255) NOT NULL,
     client_secret VARCHAR(255) NOT NULL,
     client_type VARCHAR(255) NOT NULL,
+    redirect_uri VARCHAR(255),
     PRIMARY KEY (client_id),
     FOREIGN KEY (client_type) REFERENCES ClientType(client_type)
 );
@@ -60,6 +61,19 @@ CREATE TABLE AccessToken
     FOREIGN KEY (client_id) REFERENCES Client(client_id) ON DELETE CASCADE,
     FOREIGN KEY (username) REFERENCES User(username) ON DELETE CASCADE,
     FOREIGN KEY (refresh_token) REFERENCES RefreshToken(refresh_token) ON DELETE CASCADE
+);
+
+CREATE TABLE AuthorizationCode
+(
+    code VARCHAR(255) NOT NULL, 
+    client_id VARCHAR(255) NOT NULL,
+    redirect_uri VARCHAR(255) NOT NULL,
+    issued_at TIMESTAMP,
+    expires_on TIMESTAMP,
+    username VARCHAR(255),
+    PRIMARY KEY (code),
+    FOREIGN KEY (client_id) REFERENCES Client(client_id) ON DELETE CASCADE,
+    FOREIGN KEY (username) REFERENCES User(username) ON DELETE CASCADE
 );
 
 CREATE TABLE SupportedGrantType
@@ -218,5 +232,35 @@ DELIMITER //
 CREATE PROCEDURE GetValidScopes(IN v_client_id VARCHAR(255))
 BEGIN
     SELECT scope FROM ValidScope WHERE client_id = v_client_id;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE SaveAuthorizationCode(
+    IN v_code VARCHAR(255), 
+    IN v_client_id VARCHAR(255), 
+    IN v_redirect_uri VARCHAR(255),
+    IN v_issued_at TIMESTAMP, 
+    IN v_expires_on TIMESTAMP, 
+    IN v_username VARCHAR(255))
+BEGIN
+    INSERT INTO AuthorizationCode (code, client_id, redirect_uri, issued_at, expires_on, username)
+    VALUE (v_code, v_client_id, v_redirect_uri, v_issued_at, v_expires_on, v_username);
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE GetAuthorizationCode(IN v_code VARCHAR(255))
+BEGIN
+    SELECT code, client_id, redirect_uri, issued_at, expires_on, username
+    FROM AuthorizationCode
+    WHERE code = v_code;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE DeleteAuthorizationCode(IN v_code VARCHAR(255))
+BEGIN
+    DELETE FROM AuthorizationCode WHERE code = v_code;
 END //
 DELIMITER ;
